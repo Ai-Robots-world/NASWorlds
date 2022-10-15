@@ -1,0 +1,145 @@
+version: "1.0"
+
+services:
+
+  Aria2-Pro:
+    container_name: aria2-pro
+    image: p3terx/aria2-pro:latest
+    environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Asia/Shanghai
+        - UMASK_SET=022
+        - RPC_SECRET=admin
+        - RPC_PORT=6800
+        - LISTEN_PORT=6888   
+    volumes:
+        - /SJK/docker/aria2:/config
+        - /SJK/DOWN:/downloads 
+    network_mode: bridge
+    ports:
+      - 6800:6800
+      - 6888:6888
+      - 6888:6888/udp
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        
+  AriaNg:
+    container_name: ariang
+    image: p3terx/ariang:latest
+    network_mode: bridge
+    ports:
+        - 6880:6880
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        
+  EMBY:
+    container_name: emby
+    image: linuxserver/emby
+    environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Asia/Shshanghai
+    volumes:
+        - /SJK/docker/EMBY:/config
+        - /SJK/YSK:/YSK
+    network_mode: bridge
+    ports:
+        - 8096:8096
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+  Jackett:
+    container_name: jackett
+    image: linuxserver/jackett:latest
+    environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Asia/Shshanghai
+        - AUTO_UPDATE=true
+    volumes:
+        - /SJK/docker/jackett:/config
+        - /SJK/DOWN:/downloads
+    network_mode: bridge
+    ports:
+        - 9117:9117
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+  NASTools:
+    container_name: nas-tools
+    image: jxxghp/nas-tools:latest
+    hostname: nas-tools
+    environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Asia/Shshanghai
+        - UMASK=000
+        - NASTOOL_AUTO_UPDATE=true         
+    volumes:
+        - /SJK/docker/nastools:/config
+        - /SJK:/SJK
+    network_mode: bridge
+    ports:
+        - 3000:3000
+    restart: unless-stopped
+    
+  qBittorrentEE:
+    container_name: qbittorrentee
+    image: superng6/qbittorrentee:latest
+    environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Asia/Shshanghai
+        - WEBUIPORT=8080
+    volumes:
+        - /SJK/docker/Qbittorrent:/config
+        - /SJK/DOWN:/downloads
+    network_mode: bridge
+    ports:
+        - 6881:6881
+        - 6881:6881/udp
+        - 8080:8080
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+    
+  Transmission:
+    container_name: transmission
+    image: linuxserver/transmission:latest
+    environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Asia/Shshanghai
+        - TRANSMISSION_WEB_HOME=/transmission-web-control/
+        - USER=admin
+        - PASS=admin
+    volumes:
+        - /SJK/docker/Transmission:/config
+        - /SJK/DOWN:/downloads
+        - /SJK/DOWN/PT:/watch
+    network_mode: bridge
+    ports:
+        - 9091:9091
+        - 51413:51413
+        - 51413:51413/udp
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+    
